@@ -28,11 +28,12 @@ butDict = {
     'Help': False,
     'Stats': False,
     'Accessibility': False,
-    'settings': False,
+    'Settings': False,
 }
 
 #rectangles
 menuRect = pygame.Rect(300,10,350,1060) #serves as the rectangle where the buttons to the side menu will be
+levelSelectRect = pygame.Rect(700,10,400, 400)
 
 #button images
 levelSelectImg = pygame.image.load("levelSelect.png").convert_alpha() #convert_alpha() to remove transparent particles.
@@ -40,6 +41,8 @@ gameHelpImg = pygame.image.load("gameHelp.png").convert_alpha()
 settingsImg = pygame.image.load("settings.png").convert_alpha()
 accessibilityImg = pygame.image.load("Accessibility.png").convert_alpha()
 accountStatImg = pygame.image.load("accountStats.png").convert_alpha()
+vsImg = pygame.image.load("vsButton.png").convert_alpha()
+practiseImg = pygame.image.load("practiseButton.png").convert_alpha()
 
 #making the button objects
 levelSelectButton = Button(300,20,levelSelectImg,1)
@@ -47,13 +50,22 @@ gameHelpButton = Button(300,100,gameHelpImg,1)
 settingsButton = Button(300,200,settingsImg,1)
 accessButton = Button(300,300,accessibilityImg,1)
 accountStatButton = Button(300,400,accountStatImg,1)
+vsButton = Button(700,10,vsImg,1)
+practiseButton = Button(900,10,practiseImg,1)
 
-#function that contains a dictionary of bool values that change if one of the corresponding buttons is pressed
+#procedure that contains a dictionary of bool values that change if one of the corresponding buttons is pressed
 def ButtonPress(ButName: str):
+    """
+    A procedure to alter a dictionary, updating when a button is pressed by making the corresponding value to True and setting the rest to False
+
+    Args:
+        ButName: contains the name of the button
+    Returns:
+        None
+    """
     for button in butDict:
         butDict[button] = False #sets the entire dictionary to false when called
     butDict[ButName] = True #changes the chosen option to True
-    ######## add to word
 
 
 #game loop
@@ -77,39 +89,21 @@ while run:
     #display the rect for the menu
     pygame.draw.rect(screen,(0,0,139), menuRect) #displays the rectangle as darkblue
 
-    #testing menu buttons
-    if levelSelectButton.draw() == True: # when pressed it will print level select
-        levelPressed = True  # sets one as true and the rest as false to stop multiple menus from opening at once
-        helpPressed = False
-        settingsPressed = False
-        accessPressed = False
-        statsPressed = False
+    #button press logic
+    if levelSelectButton.draw() == True: # when pressed it will change the value for the "level" key in the dictionary to true
+        ButtonPress("Level")
     if gameHelpButton.draw() == True:
-        levelPressed = False  
-        settingsPressed = False
-        accessPressed = False
-        statsPressed = False
-        helpPressed = True
+        ButtonPress("Help")
     if accessButton.draw() == True:
-        levelPressed = False  
-        helpPressed = False
-        settingsPressed = False
-        accessPressed = True
-        statsPressed = False
+        ButtonPress("Accessibility")
     if accountStatButton.draw() == True:
-        levelPressed = False  
-        helpPressed = False
-        settingsPressed = False
-        accessPressed = False
-        statsPressed = True
+        ButtonPress("Stats")
     if settingsButton.draw() ==True:
-        levelPressed = False 
-        helpPressed = False
-        settingsPressed = True
-        accessPressed = False
-        statsPressed = False
+        ButtonPress("Settings")
 
-    
-
-    
-
+    if butDict["Level"] == True:
+        pygame.draw.rect(screen, (173,216,230), levelSelectRect) # displays the rectangle that will serve as the background of the level selcet menu
+        if vsButton.draw() == True:
+            print("vs")
+        if practiseButton.draw() == True:
+            print("practise")
