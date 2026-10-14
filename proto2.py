@@ -23,7 +23,7 @@ class Button:
         self.scale = scale
         self.image = pygame.transform.scale(image, (int(width*scale),int(height*scale))) #scales the image's height and width based on the scale input by the user
         self.clicked = False
-        self.rect.topleft = None
+        self.topleft = None
 
     def draw(self, x: int, y: int):
         """
@@ -36,9 +36,9 @@ class Button:
             None
 
         """
-        self.rect.x = x
-        self.rect.y = y
-        screen.blit(self.image,(self.rect.x, self.rect.y))
+        self.x = x
+        self.y = y
+        screen.blit(self.image,(self.x, self.y))
     
     def onClick(self):
         """
@@ -60,7 +60,7 @@ class Levelselect(Button):
         """
         this should open up to a new menu
         """
-        pygame.draw.rect(screen, secondMenuCol, levelSelectRect)
+        
 
         """
         their own buttons, mnake the link in the menu class
@@ -80,7 +80,7 @@ class StartMenu:
 
     """
 
-    def __init__(self, buttons: list[Button],x: int, y: int, width: int, length: int):
+    def __init__(self, buttons: list,x: int, y: int, width: int, length: int):
         """
         initialises a menu
 
@@ -115,7 +115,7 @@ class StartMenu:
         """
 
         menuRect = pygame.Rect(self.x,self.y,self.width,self.length)
-         #display the rect for the menu
+        #display the rect for the menu
         pygame.draw.rect(screen,(0,0,139), menuRect) #displays the rectangle as darkblue
     
     def buttonDraw(self, xSpace :int, ySpace :int, buttonX:int, buttonY:int):
@@ -139,6 +139,7 @@ class StartMenu:
 
 
 
+#class SecondaryMenu(StartMenu):
 
             
 
@@ -171,14 +172,7 @@ accessPressed: bool = False
 statsPressed: bool = False
 
 
-#button dictionary
-butDict = {
-    'Level': False,
-    'Help': False,
-    'Stats': False,
-    'Accessibility': False,
-    'Settings': False,
-}
+
 
 #rectangles
 menuRect = pygame.Rect(300,10,350,1060) #serves as the rectangle where the buttons to the side menu will be
@@ -191,7 +185,7 @@ blankRect = pygame.Rect(0,0,1920,1080)
 
 
 #button images
-levelSelectImg = pygame.image.load("levelSelect.png").convert_alpha() #convert_alpha() to remove transparent particles.
+
 gameHelpImg = pygame.image.load("gameHelp.png").convert_alpha()
 settingsImg = pygame.image.load("settings.png").convert_alpha()
 accessibilityImg = pygame.image.load("Accessibility.png").convert_alpha()
@@ -200,13 +194,16 @@ vsImg = pygame.image.load("vsButton.png").convert_alpha()
 practiseImg = pygame.image.load("practiseButton.png").convert_alpha()
 
 #making the button objects
-levelButton = levelSelectButton(levelSelectImg,1) #300,20
+levelButton = Levelselect() #300,20
 gameHelpButton = Button(gameHelpImg,1) #300,100
 settingsButton = Button(settingsImg,1) #300,200
 accessButton = Button(accessibilityImg,1) #300,400
 accountStatButton = Button(accountStatImg,1) #300,400
 vsButton = Button(vsImg,1) #700,10
 practiseButton = Button(practiseImg,1) #900.10
+
+#button list
+buttonList = [levelButton]
 
 #procedure that contains a dictionary of bool values that change if one of the corresponding buttons is pressed
 def ButtonPress(ButName: str):
@@ -222,6 +219,8 @@ def ButtonPress(ButName: str):
         butDict[button] = False #sets the entire dictionary to false when called
     butDict[ButName] = True #changes the chosen option to True
 
+start = StartMenu(buttonList, 300,10,350,1060) #(self, buttons: list[Button],x: int, y: int, width: int, length: int):
+
 
 #game loop
 while run:
@@ -230,7 +229,8 @@ while run:
         if event.type == pygame.QUIT:
             pygame.quit()
             quit()
-
+    start.menuDraw()
+    start.buttonDraw(0, 20, 300, 10)
 
 
 
@@ -242,7 +242,7 @@ while run:
     screen.fill((255,255,255))
 
    
-
+"""
     if gameHelpButton.draw() == True:
         ButtonPress("Help")
     if accessButton.draw() == True:
@@ -280,3 +280,4 @@ while run:
     if butDict["Stats"] == True: #displays the account stats screen
         pygame.draw.rect(screen,secondMenuCol,statsRect)
         textDraw("stats: ", normalFont, blackText, 700, 100) #lets the user know what is being displayed
+        """
