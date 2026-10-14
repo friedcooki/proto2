@@ -72,6 +72,7 @@ class Levelselect(Button):
            practisePlaceholder = True
         """
 
+
         
 
 class StartMenu:
@@ -80,7 +81,7 @@ class StartMenu:
 
     """
 
-    def __init__(self, buttons: list,x: int, y: int, width: int, length: int):
+    def __init__(self,x: int, y: int, width: int, length: int,buttons):
         """
         initialises a menu
 
@@ -100,7 +101,7 @@ class StartMenu:
         self.y = y
         self.width = width
         self.length = length
-        self.buttons = buttons
+        self.buttons = buttons if buttons != None else []
 
     def menuDraw(self):
         """
@@ -139,9 +140,26 @@ class StartMenu:
 
 
 
-#class SecondaryMenu(StartMenu):
+class SecondaryMenu(StartMenu):
 
-            
+    def __init__(self, buttons: list):
+            super().__init__(700, 10, 600,600, None )
+            self.buttons = buttons
+
+    def menuDraw(self):
+        """
+        Draws the menu on the screen
+
+        Args:
+            None
+
+        Returns:
+            None
+
+        """
+        secondaryRect = pygame.Rect(self.x, self.y, self.width, self.length)
+        pygame.draw.rect(screen, secondMenuCol,secondaryRect)
+
 
 
 
