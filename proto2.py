@@ -27,6 +27,7 @@ class Button:
         self.topleft = None
         self.rect = self.image.get_rect()
         self.action = None
+        self.menu = False
 
     def draw(self, x: int, y: int):
         """
@@ -44,11 +45,6 @@ class Button:
         self.rect.topleft = (self.x, self.y)
         screen.blit(self.image,(self.x, self.y))
     
-    def onClick(self):
-        """
-        this will be called when the button is clicked
-
-        """
 
     def isClicked(self):
         """
@@ -69,6 +65,18 @@ class Button:
             if not pressed:
                 self.clicked = False #if not then self.clicked and self.action are set to false
             return self.action #returns self.action
+
+        
+    def onClick(self):
+        
+        """
+        this will open up to the secondary menu and load the buttons that go on that screen
+
+        Args:
+            None
+        Returns:
+            None
+        """    
 
 
 
@@ -91,14 +99,24 @@ class Levelselect(Button):
             None
             
         """
-        self.opened = not self.opened
-        if not self.opened:
-            return 
-        secondaryButton = [vsButton, practiseButton]
-        secMenu = SecondaryMenu(secondaryButton)
-        secMenu.menuDraw()
-        secMenu.buttonDraw(0,0,700,10)
-        print("level select has been clicked")   ########make a seperate method for drawing the menu
+        self.opened = True
+        if self.opened:
+            self.menu = True
+
+
+    def menuDraw(self):
+        """
+        this is what will open the secondary menu and let i stay on screen
+        Args:
+            None
+        Returns:
+            None
+        """
+        if self.menu == True:
+            secondaryButton = [vsButton, practiseButton]
+            secMenu = SecondaryMenu(secondaryButton)
+            secMenu.menuDraw()
+            secMenu.buttonDraw (400,0,700,10)
 
 
 class GameHelp(Button):
@@ -152,15 +170,6 @@ class Practise(Button):
         pygame.draw.rect(screen,(255,255,255), blankRect) # this will display text and the place holder screen
         textDraw("taking you to a practise game",normalFont,blackText,10,10)
 
-
-
-
-
-
-
-
-
-        
 
 class StartMenu:
     """
@@ -243,10 +252,7 @@ class StartMenu:
             pos = pygame.mouse.get_pos()
             pressed = pygame.mouse.get_pressed()[0] #checks the mouse pos and if left click was pressed
             if button.rect.collidepoint(pos) and pressed:
-                print("clicked - menu")
                 button.onClick()
-
-            print(button.rect.collidepoint(pos))
 
 
 class SecondaryMenu(StartMenu):
@@ -297,7 +303,7 @@ helpPressed: bool = False
 settingsPressed: bool = False
 accessPressed: bool = False
 statsPressed: bool = False
-startButton : bool = None
+startButton = None
 
 
 
@@ -324,30 +330,20 @@ practiseButton = Practise() #900.10
 #button list
 buttonList = [levelButton]
 
-#procedure that contains a dictionary of bool values that change if one of the corresponding buttons is pressed
-def ButtonPress(ButName: str):
-    """
-    A procedure to alter a dictionary, updating when a button is pressed by making the corresponding value to True and setting the rest to False
-
-    Args:
-        ButName: contains the name of the button
-    Returns:
-        None
-    """
-    for button in butDict:
-        butDict[button] = False #sets the entire dictionary to false when called
-    butDict[ButName] = True #changes the chosen option to True
 
 start = StartMenu(300,10,350,1060,buttonList) #(self, buttons: list[Button],x: int, y: int, width: int, length: int):
 
 
 #game loop
 while run:
+    #colour the screen
+    screen.fill((255,255,255))
     
     start.menuDraw()
     start.buttonDraw(0, 20, 300, 10) #def buttonDraw(self, xSpace :int, ySpace :int, buttonX:int, buttonY:int):
     start.isClicked()
-    
+    levelButton.menuDraw()
+
     #check if the game is closed
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -361,8 +357,7 @@ while run:
     pygame.display.update()
     clock.tick(60) #60 fps
     
-    #colour the screen
-    screen.fill((255,255,255))
+
 
    
 """
