@@ -41,6 +41,7 @@ class Button:
         """
         self.x = x
         self.y = y
+        self.rect.topleft = (self.x, self.y)
         screen.blit(self.image,(self.x, self.y))
     
     def onClick(self):
@@ -77,6 +78,7 @@ class Levelselect(Button):
     def __init__(self):
         levelSelectImg = pygame.image.load("levelSelect.png").convert_alpha()
         super().__init__(levelSelectImg, 1) #calls the init of button and takes it argumetns
+        self.opened : bool = False
     
     def onClick(self):
         
@@ -87,11 +89,16 @@ class Levelselect(Button):
             None
         Returns:
             None
+            
         """
+        self.opened = not self.opened
+        if not self.opened:
+            return 
         secondaryButton = [vsButton, practiseButton]
         secMenu = SecondaryMenu(secondaryButton)
         secMenu.menuDraw()
         secMenu.buttonDraw(0,0,700,10)
+        print("level select has been clicked")   ########make a seperate method for drawing the menu
 
 
 class GameHelp(Button):
@@ -217,7 +224,29 @@ class StartMenu:
             button.draw(buttonX,buttonY)
             buttonX = buttonX + xSpace
             buttonY = buttonY + ySpace #add the button size
+        
+        self.isClicked()
+            
+        
+    def isClicked(self):
+        """
+        detects if the button is clicked
 
+        Args:
+            None
+        Returns: 
+            bool - True if the button is clicked, False if not
+
+        """
+        for button in self.buttons:
+            
+            pos = pygame.mouse.get_pos()
+            pressed = pygame.mouse.get_pressed()[0] #checks the mouse pos and if left click was pressed
+            if button.rect.collidepoint(pos) and pressed:
+                print("clicked - menu")
+                button.onClick()
+
+            print(button.rect.collidepoint(pos))
 
 
 class SecondaryMenu(StartMenu):
@@ -268,6 +297,7 @@ helpPressed: bool = False
 settingsPressed: bool = False
 accessPressed: bool = False
 statsPressed: bool = False
+startButton : bool = None
 
 
 
@@ -313,16 +343,18 @@ start = StartMenu(300,10,350,1060,buttonList) #(self, buttons: list[Button],x: i
 
 #game loop
 while run:
+    
+    start.menuDraw()
+    start.buttonDraw(0, 20, 300, 10) #def buttonDraw(self, xSpace :int, ySpace :int, buttonX:int, buttonY:int):
+    start.isClicked()
+    
     #check if the game is closed
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             quit()
-    start.menuDraw()
-    start.buttonDraw(0, 20, 300, 10)
-    for button in buttonList:
-        if button.isClicked(): #checks if the buttons are pressed and executes what their ment to do
-            button.onClick()
+
+
 
 
     #sets fps and makes sure screen is updated
