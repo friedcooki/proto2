@@ -117,6 +117,7 @@ class Levelselect(Button):
             secMenu = SecondaryMenu(secondaryButton)
             secMenu.menuDraw()
             secMenu.buttonDraw (400,0,700,10)
+            secMenu.isClicked()
 
 
 class GameHelp(Button):
@@ -158,17 +159,67 @@ class Vsbutton(Button):
     def __init__(self):
         vsImg = pygame.image.load("vsButton.png").convert_alpha()
         super().__init__(vsImg,1)
+        self.opened = False
+        self.newDisplay = False
+        
     def onClick(self):
-        pygame.draw.rect(screen,(255,255,255),blankRect)#displays the placeholder screens
-        textDraw("taking you to a vs game", normalFont,blackText,10,10)
+        """
+        this will allow the secondary menu class to open the vs screen perminatly
+        
+        Args:
+            None
+        Returns:
+            None
+        """
+        self.opened = not self.opened
+        if self.opened:
+            self.newDisplay = True
+            
+            
+    def displayDraw(self):
+        """
+        This will draw the vs screen on the screen
+        
+        Args:
+            None
+        Returns:
+            None 
+        """
+        if self.newDisplay:
+            pygame.draw.rect(screen,(255,255,255),blankRect)#displays the placeholder screens
+            textDraw("taking you to a vs game", normalFont,blackText,10,10)
 
 class Practise(Button):
     def __init__(self):
         practiseImg = pygame.image.load("practiseButton.png").convert_alpha()
         super().__init__(practiseImg,1)
+        self.opened = False
+        self.newDisplay = False
     def onClick(self):
-        pygame.draw.rect(screen,(255,255,255), blankRect) # this will display text and the place holder screen
-        textDraw("taking you to a practise game",normalFont,blackText,10,10)
+        """
+        this will allow the secondary menu class to open the vs screen perminatly
+        
+        Args:
+            None
+        Returns:
+            None
+        """
+        if self.opened:
+            self.newDisplay = True 
+            
+    def displayDraw(self):
+        """
+        This will draw the vs screen on the screen
+        
+        Args:
+            None
+        Returns:
+            None 
+        """
+        if self.newDisplay:
+            pygame.draw.rect(screen,(255,255,255),blankRect)#displays the placeholder screens
+            textDraw("taking you to a practise game",normalFont,blackText,10,10)
+        
 
 
 class StartMenu:
@@ -244,7 +295,7 @@ class StartMenu:
         Args:
             None
         Returns: 
-            bool - True if the button is clicked, False if not
+            None
 
         """
         for button in self.buttons:
@@ -274,6 +325,38 @@ class SecondaryMenu(StartMenu):
         """
         secondaryRect = pygame.Rect(self.x, self.y, self.width, self.length)
         pygame.draw.rect(screen, secondMenuCol,secondaryRect)
+        
+    def displayDraw(self):
+        """
+        this will draw the placeholder screens.
+        Args:
+            None
+        Returns:
+            None
+        
+        """
+        for button in self.buttons:
+            button.onClick()
+            
+    def isClicked(self):
+        """
+        detects if the button is clicked
+
+        Args:
+            None
+        Returns: 
+            None
+
+        """
+        for button in self.buttons:
+            
+            pos = pygame.mouse.get_pos()
+            pressed = pygame.mouse.get_pressed()[0] #checks the mouse pos and if left click was pressed
+            if button.rect.collidepoint(pos) and pressed:
+                button.onClick()
+                button.displayDraw()
+        
+    
 
 
 
@@ -356,45 +439,3 @@ while run:
     #sets fps and makes sure screen is updated
     pygame.display.update()
     clock.tick(60) #60 fps
-    
-
-
-   
-"""
-    if gameHelpButton.draw() == True:
-        ButtonPress("Help")
-    if accessButton.draw() == True:
-        ButtonPress("Accessibility")
-    if accountStatButton.draw() == True:
-        ButtonPress("Stats")
-    if settingsButton.draw() ==True:
-        ButtonPress("Settings")
-
-    if butDict["Level"] == True:
-        pygame.draw.rect(screen, secondMenuCol, levelSelectRect) # displays the rectangle that will serve as the background of the level selcet menu
-
-            
-    if vsPlaceholder == True:
-        pygame.draw.rect(screen,(255,255,255),blankRect)#displays the placeholder screens
-        textDraw("taking you to a vs game", normalFont,bblackText,10,10)
-        
-    if practisePlaceholder == True:
-
-        
-    if butDict["Help"] == True:
-        pygame.draw.rect(screen,secondMenuCol,gameHelpRect) #displays the secondary menu for game help
-        textDraw("Rules:",normalFont,blackText,700,50)
-        
-    if butDict["Settings"] == True:
-        pygame.draw.rect(screen,secondMenuCol,settingsRect) #displays the menu and the texts
-        textDraw("difficulty:", normalFont,blackText,700,50)
-        textDraw("friction:", normalFont,blackText, 700,250)
-        
-    if butDict["Accessibility"] == True: #displays the accessibility screen
-        pygame.draw.rect(screen,secondMenuCol,accessibilityRect)
-        textDraw("high contrast mode:",normalFont,blackText,700,100) #marker for the selects for high cotnrast mode
-        
-    if butDict["Stats"] == True: #displays the account stats screen
-        pygame.draw.rect(screen,secondMenuCol,statsRect)
-        textDraw("stats: ", normalFont, blackText, 700, 100) #lets the user know what is being displayed
-        """
