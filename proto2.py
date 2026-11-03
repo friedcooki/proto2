@@ -19,10 +19,10 @@ class Button:
             None
 
         """
-        height = image.get_height() #gets the width and height to be used for scale
-        width = image.get_width()
+        self.height = image.get_height() #gets the width and height to be used for scale
+        self.width = image.get_width()
         self.scale = scale
-        self.image = pygame.transform.scale(image, (int(width*scale),int(height*scale))) #scales the image's height and width based on the scale input by the user
+        self.image = pygame.transform.scale(image, (int(self.width*scale),int(self.height*scale))) #scales the image's height and width based on the scale input by the user
         self.clicked = False
         self.topleft = None
         self.rect = self.image.get_rect()
@@ -76,9 +76,29 @@ class Button:
             None
         Returns:
             None
-        """    
+        """
+    def getHeight(self):
+        """
+        this will return the height of the button
+        
+        Args:
+            None
+        Returns:
+            int - int value of the height of the button
+        """
+        
+        return self.height
+    
+    def getWidth(self):
+        """
+        this will return the width of the button
+        Args:
+            None
+        Returns:
+            int - int of the width of the button
+        """
 
-
+        return self.width
 
 
 class Levelselect(Button):
@@ -195,6 +215,7 @@ class Practise(Button):
         super().__init__(practiseImg,1)
         self.opened = False
         self.newDisplay = False
+    
     def onClick(self):
         """
         this will allow the secondary menu class to open the vs screen perminatly
@@ -204,8 +225,9 @@ class Practise(Button):
         Returns:
             None
         """
+        self.opened = not self.opened
         if self.opened:
-            self.newDisplay = True 
+            self.newDisplay = True
             
     def displayDraw(self):
         """
@@ -279,11 +301,18 @@ class StartMenu:
             None
 
         """
+        
 
         for button in self.buttons:
             button.draw(buttonX,buttonY)
-            buttonX = buttonX + xSpace
-            buttonY = buttonY + ySpace #add the button size
+            height = button.getHeight()
+            width = button.getWidth()
+            if xSpace == 0:
+                buttonY = buttonY + ySpace + height #if the X space is 0 the buttons are just moving verically so only the y changes
+            else :
+                buttonX = buttonX + xSpace + width # if the x space isnt 0 than the buttons aren't only veriticle so the x changes (before with this logic the x distance would always change)
+                buttonY = buttonY + ySpace + height #if the X space is 0 the buttons are just moving verically so only the y changes
+            
         
         self.isClicked()
             
@@ -411,7 +440,7 @@ vsButton = Vsbutton() #700,10
 practiseButton = Practise() #900.10
 
 #button list
-buttonList = [levelButton]
+buttonList = [levelButton, gameHelpButton, settingsButton, accessButton, accountStatButton]
 
 
 start = StartMenu(300,10,350,1060,buttonList) #(self, buttons: list[Button],x: int, y: int, width: int, length: int):
@@ -423,9 +452,11 @@ while run:
     screen.fill((255,255,255))
     
     start.menuDraw()
-    start.buttonDraw(0, 20, 300, 10) #def buttonDraw(self, xSpace :int, ySpace :int, buttonX:int, buttonY:int):
+    start.buttonDraw(0, 100, 20, 10) #def buttonDraw(self, xSpace :int, ySpace :int, buttonX:int, buttonY:int):
     start.isClicked()
     levelButton.menuDraw()
+    vsButton.displayDraw() #displays the placeholder screen when the vsButton is pressed
+    practiseButton.displayDraw() # displays the placeholder screnn for practise when the button is pressed
 
     #check if the game is closed
     for event in pygame.event.get():
