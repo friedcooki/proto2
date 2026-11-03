@@ -136,7 +136,7 @@ class Levelselect(Button):
             secondaryButton = [vsButton, practiseButton]
             secMenu = SecondaryMenu(secondaryButton)
             secMenu.menuDraw()
-            secMenu.buttonDraw (400,0,700,10)
+            secMenu.buttonDraw (200,0,700,10)
             secMenu.isClicked()
 
 
@@ -147,16 +147,55 @@ class GameHelp(Button):
 
     def onClick(self):
         "This will open to the secondary menu and load the buttons"
-        pass
-
+        self.opened = True
+        if self.opened:
+            self.menu = True
+            
+    def menuDraw(self):
+        """
+        this is what will open the secondary menu for the game help button
+        Args:
+            None
+        Returns:
+            None
+            
+        """
+        if self.menu == True:
+            secMenu = SecondaryMenu(gamehelpmen) # initalises
+            secMenu.menuDraw()
+            textDraw("this is where the game rules will be", normalFont,blackText,700,20)
 class Settings(Button):
     def __init__(self):
         settingsImg = pygame.image.load("settings.png").convert_alpha()
         super().__init__(settingsImg,1) #uses the superclass init to set the image and scale
 
     def onClick(self):
-        "This will open to the secondary menu and load the buttons"
-        pass
+        """
+        This will open to the secondary menu and load the buttons
+        Args:
+            None
+        Returns:
+            None
+        """
+        self.opened = True
+        if self.opened:
+            self.menu = True
+    
+    def menuDraw(self):
+        """
+        this will open the secondary menu and display the options to pick from in settings
+        Args:
+            None
+        Returns:
+            None
+
+        """
+        if self.menu == True:
+            secondaryButton = []
+            secMenu = SecondaryMenu(secondaryButton)
+            secMenu.menuDraw()
+            textDraw("difficulty:", )
+
 
 class Accessibility(Button):
     def __init__(self):
@@ -241,7 +280,16 @@ class Practise(Button):
         if self.newDisplay:
             pygame.draw.rect(screen,(255,255,255),blankRect)#displays the placeholder screens
             textDraw("taking you to a practise game",normalFont,blackText,10,10)
-        
+
+class difficultyButton(Button):
+    def __init__(self):
+        clickedImg = pygame.image.load("difficultyclicked.png").convert_alpha()
+        notclickedImg = pygame.image.load("difficultynot.png").convert_alpha()
+        self.image = notclickedImg
+        super().__init__(self.image,1)
+        self.clicked = False
+        #need a seperate screenblit so that the different images can be drawn when the buttons are pressed https://stackoverflow.com/questions/74797048/how-do-i-change-the-image-of-a-button-when-its-clicked-in-pygame
+
 
 
 class StartMenu:
@@ -309,6 +357,11 @@ class StartMenu:
             width = button.getWidth()
             if xSpace == 0:
                 buttonY = buttonY + ySpace + height #if the X space is 0 the buttons are just moving verically so only the y changes
+                buttonX = buttonX
+            elif ySpace == 0:
+                buttonY = buttonY
+                buttonX = buttonX + xSpace + width
+            
             else :
                 buttonX = buttonX + xSpace + width # if the x space isnt 0 than the buttons aren't only veriticle so the x changes (before with this logic the x distance would always change)
                 buttonY = buttonY + ySpace + height #if the X space is 0 the buttons are just moving verically so only the y changes
@@ -441,6 +494,7 @@ practiseButton = Practise() #900.10
 
 #button list
 buttonList = [levelButton, gameHelpButton, settingsButton, accessButton, accountStatButton]
+gamehelpmen = []
 
 
 start = StartMenu(300,10,350,1060,buttonList) #(self, buttons: list[Button],x: int, y: int, width: int, length: int):
@@ -452,12 +506,13 @@ while run:
     screen.fill((255,255,255))
     
     start.menuDraw()
-    start.buttonDraw(0, 100, 20, 10) #def buttonDraw(self, xSpace :int, ySpace :int, buttonX:int, buttonY:int):
+    start.buttonDraw(0, 100, 300, 10) #def buttonDraw(self, xSpace :int, ySpace :int, buttonX:int, buttonY:int):
     start.isClicked()
     levelButton.menuDraw()
     vsButton.displayDraw() #displays the placeholder screen when the vsButton is pressed
     practiseButton.displayDraw() # displays the placeholder screnn for practise when the button is pressed
-
+    gameHelpButton.menuDraw() # displays the gamehelp button when it is clicked
+    settingsButton.menuDraw() #displays the settings menu when pressed
     #check if the game is closed
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
