@@ -64,6 +64,7 @@ class Button:
                 self.action = True
             if not pressed:
                 self.clicked = False #if not then self.clicked and self.action are set to false
+                self.action = False
             return self.action #returns self.action
 
         
@@ -164,6 +165,7 @@ class GameHelp(Button):
             secMenu = SecondaryMenu(gamehelpmen) # initalises
             secMenu.menuDraw()
             textDraw("this is where the game rules will be", normalFont,blackText,700,20)
+
 class Settings(Button):
     def __init__(self):
         settingsImg = pygame.image.load("settings.png").convert_alpha()
@@ -194,7 +196,7 @@ class Settings(Button):
             secondaryButton = []
             secMenu = SecondaryMenu(secondaryButton)
             secMenu.menuDraw()
-            textDraw("difficulty:", )
+            textDraw("difficulty:", normalFont,blackText, 750,30 )
 
 
 class Accessibility(Button):
@@ -283,14 +285,29 @@ class Practise(Button):
 
 class difficultyButton(Button):
     def __init__(self):
-        clickedImg = pygame.image.load("difficultyclicked.png").convert_alpha()
+        clickedImg = pygame.image.load("difficultyclicked.png").convert_alpha() # loads the images
         notclickedImg = pygame.image.load("difficultynot.png").convert_alpha()
         self.image = notclickedImg
-        super().__init__(self.image,1)
-        self.clicked = False
-        #need a seperate screenblit so that the different images can be drawn when the buttons are pressed https://stackoverflow.com/questions/74797048/how-do-i-change-the-image-of-a-button-when-its-clicked-in-pygame
+        super().__init__(self.image,1) #uses Button Class init
+        self.action = False
 
+    def draw(self,x: int,y: int):
+        """
+        This method will draw an image on the screen where the button is and change when the button has been selected
+        Args:
+            x : the x coordinate of the top left corner of the button
+            y : the y coordinate of the top right corner of the button
+        Return:
+            None
 
+        """
+        self.x = x ###########################################change isClicked to self.action
+        self.y = y
+        self.rect.topleft = (self.x, self.y)
+        if self.isClicked() == True: # depending if the button has been clicked it will change image
+            screen.blit(clickedImg,(self.x, self.y))
+        elif self.isClicked() == False:
+            screen.blit(notclickedImg,(self.x,self.y))
 
 class StartMenu:
     """
@@ -462,6 +479,7 @@ vsPlaceholder: bool = False
 practisePlaceholder:bool = False
 secondMenuCol = (173,216,230)
 blackText = (0,0,0)
+
 #Button variables
 levelPressed: bool = False  #i will use these values in the event loop for the pop out menus
 helpPressed: bool = False
@@ -483,7 +501,7 @@ statsRect = pygame.Rect(700, 90, 400,400)
 blankRect = pygame.Rect(0,0,1920,1080)
 
 
-#making the button objects
+#making the button objects  - these numbers are the old coords, just there so i remeber them for later
 levelButton = Levelselect() #300,20
 gameHelpButton = GameHelp() #300,100
 settingsButton = Settings() #300,200
@@ -491,6 +509,9 @@ accessButton = Accessibility() #300,400
 accountStatButton = AccountStats() #300,400
 vsButton = Vsbutton() #700,10
 practiseButton = Practise() #900.10
+easyDiff = difficultyButton()
+midDiff = difficultyButton()
+hardDiff = difficultyButton()
 
 #button list
 buttonList = [levelButton, gameHelpButton, settingsButton, accessButton, accountStatButton]
