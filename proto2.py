@@ -299,13 +299,24 @@ class difficultyButton(Button):
             None
 
         """
-        self.x = x ###########################################change isClicked to self.action
+        self.x = x
         self.y = y
         self.rect.topleft = (self.x, self.y)
         if self.action == True: # depending if the button has been clicked it will change image
             screen.blit(self.clickedImg,(self.x, self.y))
         elif self.action == False:
             screen.blit(self.notclickedImg,(self.x,self.y))
+
+    def imageswap(self):
+        """
+        this method will be used to change self.action when the button is pressed once to True and when its pressed again to False so that button images can swap
+
+        Args:
+            None
+        Returns:
+            None
+        """
+        
 
 class StartMenu:
     """
