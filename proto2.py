@@ -140,7 +140,6 @@ class Levelselect(Button):
             secMenu.buttonDraw (200,0,700,10)
             secMenu.isClicked()
 
-
 class GameHelp(Button):
     def __init__(self):
         gameHelpImg = pygame.image.load("gameHelp.png").convert_alpha()
@@ -197,7 +196,6 @@ class Settings(Button):
             secMenu = SecondaryMenu(secondaryButton)
             secMenu.menuDraw()
             textDraw("difficulty:", normalFont,blackText, 750,30 )
-
 
 class Accessibility(Button):
     def __init__(self):
@@ -287,7 +285,7 @@ class difficultyButton(Button):
     def __init__(self):
         self.clickedImg = pygame.image.load("difficultyclicked.png").convert_alpha() # loads the images
         self.notclickedImg = pygame.image.load("difficultynot.png").convert_alpha()
-        self.image = notclickedImg
+        self.image = self.notclickedImg
         super().__init__(self.image,1) #uses Button Class init
         self.action = False
 
