@@ -285,8 +285,8 @@ class Practise(Button):
 
 class difficultyButton(Button):
     def __init__(self):
-        clickedImg = pygame.image.load("difficultyclicked.png").convert_alpha() # loads the images
-        notclickedImg = pygame.image.load("difficultynot.png").convert_alpha()
+        self.clickedImg = pygame.image.load("difficultyclicked.png").convert_alpha() # loads the images
+        self.notclickedImg = pygame.image.load("difficultynot.png").convert_alpha()
         self.image = notclickedImg
         super().__init__(self.image,1) #uses Button Class init
         self.action = False
@@ -304,10 +304,10 @@ class difficultyButton(Button):
         self.x = x ###########################################change isClicked to self.action
         self.y = y
         self.rect.topleft = (self.x, self.y)
-        if self.isClicked() == True: # depending if the button has been clicked it will change image
-            screen.blit(clickedImg,(self.x, self.y))
-        elif self.isClicked() == False:
-            screen.blit(notclickedImg,(self.x,self.y))
+        if self.action == True: # depending if the button has been clicked it will change image
+            screen.blit(self.clickedImg,(self.x, self.y))
+        elif self.action == False:
+            screen.blit(self.notclickedImg,(self.x,self.y))
 
 class StartMenu:
     """
