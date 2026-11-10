@@ -61,10 +61,8 @@ class Button:
         if self.rect.collidepoint(pos) == True:
             if pressed and not self.clicked:
                 self.clicked = True #if it was self.action is set to true and self.clicked is set to true
-                self.action = True
             if not pressed:
                 self.clicked = False #if not then self.clicked and self.action are set to false
-                self.action = False
             return self.action #returns self.action
 
         
@@ -78,6 +76,7 @@ class Button:
         Returns:
             None
         """
+        self.menu = not self.menu
     def getHeight(self):
         """
         this will return the height of the button
@@ -109,20 +108,6 @@ class Levelselect(Button):
         super().__init__(levelSelectImg, 1) #calls the init of button and takes it argumetns
         self.opened : bool = False
     
-    def onClick(self):
-        
-        """
-        this will open up to the secondary menu and load the buttons that go on that screen
-
-        Args:
-            None
-        Returns:
-            None
-            
-        """
-        self.opened = True
-        if self.opened:
-            self.menu = True
 
 
     def menuDraw(self):
@@ -145,11 +130,6 @@ class GameHelp(Button):
         gameHelpImg = pygame.image.load("gameHelp.png").convert_alpha()
         super().__init__(gameHelpImg,1) #uses the superclass init
 
-    def onClick(self):
-        "This will open to the secondary menu and load the buttons"
-        self.opened = True
-        if self.opened:
-            self.menu = True
             
     def menuDraw(self):
         """
@@ -170,17 +150,6 @@ class Settings(Button):
         settingsImg = pygame.image.load("settings.png").convert_alpha()
         super().__init__(settingsImg,1) #uses the superclass init to set the image and scale
 
-    def onClick(self):
-        """
-        This will open to the secondary menu and load the buttons
-        Args:
-            None
-        Returns:
-            None
-        """
-        self.opened = True
-        if self.opened:
-            self.menu = True
     
     def menuDraw(self):
         """
@@ -196,23 +165,25 @@ class Settings(Button):
             secMenu = SecondaryMenu(secondaryButton)
             secMenu.menuDraw()
             textDraw("difficulty:", normalFont,blackText, 750,30 )
+            easyDiff.draw()
+            midDiff.draw()
+            hardDiff.draw()
+            textDraw("easy", normalFont, blackText, 750,90)
+            textDraw("medium", normalFont, blackText, 850,90)
+            textDraw("hard", normalFont, blackText, 950,90)
+
 
 class Accessibility(Button):
     def __init__(self):
         accessibilityImg = pygame.image.load("Accessibility.png").convert_alpha()
         super().__init__(accessibilityImg,1)
-    def onClick(self):
-        "This will open to the secondary menu and load the buttons"
-        pass
+
 
 class AccountStats(Button):
     def __init__(self):
         accountStatImg = pygame.image.load("accountStats.png").convert_alpha()
         super().__init__(accountStatImg,1)
 
-    def onClick(self):
-        "This will open to the secondary menu and load the buttons"
-        pass
 
 class Vsbutton(Button):
     def __init__(self):
@@ -282,14 +253,17 @@ class Practise(Button):
             textDraw("taking you to a practise game",normalFont,blackText,10,10)
 
 class difficultyButton(Button):
-    def __init__(self):
+    def __init__(self, x: int, y: int):
         self.clickedImg = pygame.image.load("difficultyclicked.png").convert_alpha() # loads the images
         self.notclickedImg = pygame.image.load("difficultynot.png").convert_alpha()
         self.image = self.notclickedImg
         super().__init__(self.image,1) #uses Button Class init
         self.action = False
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
 
-    def draw(self,x: int,y: int):
+    def draw(self):
         """
         This method will draw an image on the screen where the button is and change when the button has been selected
         Args:
@@ -299,15 +273,13 @@ class difficultyButton(Button):
             None
 
         """
-        self.x = x
-        self.y = y
         self.rect.topleft = (self.x, self.y)
         if self.action == True: # depending if the button has been clicked it will change image
-            screen.blit(self.clickedImg,(self.x, self.y))
+            screen.blit(self.clickedImg,self.rect.topleft)
         elif self.action == False:
-            screen.blit(self.notclickedImg,(self.x,self.y))
+            screen.blit(self.notclickedImg,self.rect.topleft)
 
-    def imageswap(self):
+    def imageswap(self,event):
         """
         this method will be used to change self.action when the button is pressed once to True and when its pressed again to False so that button images can swap
 
@@ -316,6 +288,22 @@ class difficultyButton(Button):
         Returns:
             None
         """
+        pos = pygame.mouse.get_pos()
+        pressed = pygame.mouse.get_pressed()[0] #checks the mouse pos and if left click was pressed
+        
+        if event.type == pygame.MOUSEBUTTONDOWN:    
+            if self.rect.collidepoint(event.pos) == True:
+                self.action = not self.action
+            if self.clicked == True and self.action != True:
+                self.action = True #if the buttons are clciked and they've not already been clicked on self.action = True
+                print("first click worked")
+                self.draw()
+            elif self.clicked == True and self.action == True:
+                self.action = False #if the buttons are clicked and they've already been clicked self.action = False so that the buttons can be unselected
+                print("second click worked")
+                self.draw()
+
+
         
 
 class StartMenu:
@@ -412,6 +400,15 @@ class StartMenu:
             pressed = pygame.mouse.get_pressed()[0] #checks the mouse pos and if left click was pressed
             if button.rect.collidepoint(pos) and pressed:
                 button.onClick()
+    
+    def eventHandle(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            for button in self.buttons:
+                if button.rect.collidepoint(event.pos):
+                    for other in self.buttons:
+                        if other is not button:
+                            other.menu = False
+                    button.onClick()
 
 
 class SecondaryMenu(StartMenu):
@@ -518,9 +515,9 @@ accessButton = Accessibility() #300,400
 accountStatButton = AccountStats() #300,400
 vsButton = Vsbutton() #700,10
 practiseButton = Practise() #900.10
-easyDiff = difficultyButton()
-midDiff = difficultyButton()
-hardDiff = difficultyButton()
+easyDiff = difficultyButton(750,50)
+midDiff = difficultyButton(850,50)
+hardDiff = difficultyButton(950,50)
 
 #button list
 buttonList = [levelButton, gameHelpButton, settingsButton, accessButton, accountStatButton]
@@ -543,11 +540,21 @@ while run:
     practiseButton.displayDraw() # displays the placeholder screnn for practise when the button is pressed
     gameHelpButton.menuDraw() # displays the gamehelp button when it is clicked
     settingsButton.menuDraw() #displays the settings menu when pressed
+
+
     #check if the game is closed
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             quit()
+        start.eventHandle(event)
+        if settingsButton.menu:
+            easyDiff.imageswap(event)
+            midDiff.imageswap(event) #each checks for being clciked so that the image can change
+            hardDiff.imageswap(event)
+        if levelButton.menu:
+            SecondaryMenu([vsButton,practiseButton]).eventHandle(event)
+
 
 
 
