@@ -1,6 +1,5 @@
 import pygame
 import sqlite3
-from loginScreenScript import username
 from loginScreenScript import textDraw #imports a function that displays text on screen when called
 
 userFile = sqlite3.connect("user.db")
@@ -104,7 +103,6 @@ class Button:
 
         return self.width
 
-
 class Levelselect(Button):
 
     def __init__(self):
@@ -176,7 +174,6 @@ class Settings(Button):
             textDraw("medium", normalFont, blackText, 850,90)
             textDraw("hard", normalFont, blackText, 950,90)
 
-
 class Accessibility(Button):
     def __init__(self):
         accessibilityImg = pygame.image.load("Accessibility.png").convert_alpha()
@@ -199,28 +196,27 @@ class Accessibility(Button):
             textDraw("On",normalFont,blackText,750,100)
             textDraw("Off",normalFont,blackText,850,100)
 
-
-
 class AccountStats(Button):
     def __init__(self):
         accountStatImg = pygame.image.load("accountStats.png").convert_alpha()
         super().__init__(accountStatImg,1)
+        self.username = "username"
 
     def getData(self):
         userData = userFile.cursor()
-        return userData.execute("SELECT * FROM users WHERE username = ?", (username,),)
+        return userData.execute("SELECT * FROM users WHERE username = ?", (self.username,),).fetchone() # takes all the data from the line where the usernames match
     def printData(self):
         print(self.getData())
 
     def menuDraw(self):
         if self.menu:
             secondaryButton = []
-            secMenu = SecondaryMenu(secondaryButton)
+            secMenu = SecondaryMenu(secondaryButton) #initialises as an object
             secMenu.menuDraw()
-            textDraw("Win | Loss | games ",normalFont,blackText,700,30)
-            self.printData()
-
-
+            self.dataList = self.getData()
+            textDraw("         Win         |        loss         |       games         ",normalFont,blackText,700,30) # what displays on screen when the menu opens
+            textDraw(f"         {self.dataList[1]}                  {self.dataList[2]         }                  {self.dataList[3]}         ",normalFont,blackText,700,70)
+            
 
 
 class Vsbutton(Button):
@@ -341,9 +337,6 @@ class difficultyButton(Button):
                 print("second click worked")
                 self.draw()
 
-
-        
-
 class StartMenu:
     """
     class for the main menu
@@ -447,7 +440,6 @@ class StartMenu:
                         if other is not button:
                             other.menu = False
                     button.onClick()
-
 
 class SecondaryMenu(StartMenu):
 
