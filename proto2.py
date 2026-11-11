@@ -1,5 +1,9 @@
 import pygame
+import sqlite3
+from loginScreenScript import username
 from loginScreenScript import textDraw #imports a function that displays text on screen when called
+
+userFile = sqlite3.connect("user.db")
 
 class Button:
     """ 
@@ -177,12 +181,46 @@ class Accessibility(Button):
     def __init__(self):
         accessibilityImg = pygame.image.load("Accessibility.png").convert_alpha()
         super().__init__(accessibilityImg,1)
+    def menuDraw(self):
+        """
+        This will be used to draw the menu
+        Args:
+            None
+        Return:
+            None
+        """
+        if self.menu:
+            secondaryButton = []
+            secMenu = SecondaryMenu(secondaryButton)
+            secMenu.menuDraw()
+            HigConOn.draw()
+            HigConOff.draw()
+            textDraw("High contrast mode: ", normalFont,blackText,750,30)
+            textDraw("On",normalFont,blackText,750,100)
+            textDraw("Off",normalFont,blackText,850,100)
+
 
 
 class AccountStats(Button):
     def __init__(self):
         accountStatImg = pygame.image.load("accountStats.png").convert_alpha()
         super().__init__(accountStatImg,1)
+
+    def getData(self):
+        userData = userFile.cursor()
+        return userData.execute("SELECT * FROM users WHERE username = ?", (username,),)
+    def printData(self):
+        print(self.getData())
+
+    def menuDraw(self):
+        if self.menu:
+            secondaryButton = []
+            secMenu = SecondaryMenu(secondaryButton)
+            secMenu.menuDraw()
+            textDraw("Win | Loss | games ",normalFont,blackText,700,30)
+            self.printData()
+
+
 
 
 class Vsbutton(Button):
@@ -506,18 +544,19 @@ accessibilityRect = pygame.Rect(700,70,400,400)
 statsRect = pygame.Rect(700, 90, 400,400)
 blankRect = pygame.Rect(0,0,1920,1080)
 
-
-#making the button objects  - these numbers are the old coords, just there so i remeber them for later
-levelButton = Levelselect() #300,20
-gameHelpButton = GameHelp() #300,100
-settingsButton = Settings() #300,200
-accessButton = Accessibility() #300,400
-accountStatButton = AccountStats() #300,400
-vsButton = Vsbutton() #700,10
-practiseButton = Practise() #900.10
+#making the button objects
+levelButton = Levelselect()
+gameHelpButton = GameHelp()
+settingsButton = Settings()
+accessButton = Accessibility()
+accountStatButton = AccountStats()
+vsButton = Vsbutton()
+practiseButton = Practise()
 easyDiff = difficultyButton(750,50)
 midDiff = difficultyButton(850,50)
 hardDiff = difficultyButton(950,50)
+HigConOn = difficultyButton(750,50)
+HigConOff = difficultyButton(850,50)
 
 #button list
 buttonList = [levelButton, gameHelpButton, settingsButton, accessButton, accountStatButton]
@@ -540,6 +579,8 @@ while run:
     practiseButton.displayDraw() # displays the placeholder screnn for practise when the button is pressed
     gameHelpButton.menuDraw() # displays the gamehelp button when it is clicked
     settingsButton.menuDraw() #displays the settings menu when pressed
+    accessButton.menuDraw()
+    accountStatButton.menuDraw()
 
 
     #check if the game is closed
@@ -554,6 +595,12 @@ while run:
             hardDiff.imageswap(event)
         if levelButton.menu:
             SecondaryMenu([vsButton,practiseButton]).eventHandle(event)
+        if accessButton.menu:
+            SecondaryMenu([]).eventHandle(event)
+            HigConOn.imageswap(event)
+            HigConOff.imageswap(event) # changes the images displayed when clicked
+        if accountStatButton.menu:
+            SecondaryMenu([]).eventHandle(event)
 
 
 
