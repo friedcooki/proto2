@@ -106,6 +106,14 @@ class Button:
 class Levelselect(Button):
 
     def __init__(self):
+        """
+        Constructor for the LevelSelect subclass of button
+
+        Args:
+            None
+        Returns:
+            None
+        """
         levelSelectImg = pygame.image.load("levelSelect.png").convert_alpha()
         super().__init__(levelSelectImg, 1) #calls the init of button and takes it argumetns
         self.opened : bool = False
@@ -128,7 +136,16 @@ class Levelselect(Button):
             secMenu.isClicked()
 
 class GameHelp(Button):
+
     def __init__(self):
+        """
+        Constructor for the GameHelp subclass of button
+
+        Args:
+            None
+        Returns:
+            None
+        """
         gameHelpImg = pygame.image.load("gameHelp.png").convert_alpha()
         super().__init__(gameHelpImg,1) #uses the superclass init
 
@@ -145,12 +162,25 @@ class GameHelp(Button):
         if self.menu == True:
             secMenu = SecondaryMenu(gamehelpmen) # initalises
             secMenu.menuDraw()
-            textDraw("this is where the game rules will be", normalFont,blackText,700,20)
-
+            textDraw("1. No matter if anything is potted on break, its still an open table on the next turn,", ruleFont,blackText,700,20)
+            textDraw("2. If the cue ball hits nothing or the other players colour, they get 2 shots ball in hand behind the starting line,", ruleFont,blackText,700,35)
+            textDraw("3. If you pot the other players colour 2 shots ball in hand, pot white and 2 shots ball in hand to other player, pot black the game's over,", ruleFont,blackText,700,50)
+            textDraw("4. If you have 2 shots, on your first shot you can pot any colour ball and it is fine. pots carry over like normal", ruleFont,blackText,700,65)
+            textDraw("5. If you are in a situation where you're on black and the other player fouls (ball in hand 2 shots) you only get one shot", ruleFont,blackText,700,80)
+            
 class Settings(Button):
     def __init__(self):
+        """
+        constructor for the Settings subclass of button
+
+        Args:
+            None
+        Returns:
+            None
+        """
         settingsImg = pygame.image.load("settings.png").convert_alpha()
         super().__init__(settingsImg,1) #uses the superclass init to set the image and scale
+        
 
     
     def menuDraw(self):
@@ -176,11 +206,19 @@ class Settings(Button):
 
 class Accessibility(Button):
     def __init__(self):
+        """
+        Constructor for the Accessibility subclass of button
+
+        Args:
+            None
+        Returns:
+            None
+        """
         accessibilityImg = pygame.image.load("Accessibility.png").convert_alpha()
         super().__init__(accessibilityImg,1)
     def menuDraw(self):
         """
-        This will be used to draw the menu
+        This will be used to draw the menu and the text displayed on the page
         Args:
             None
         Return:
@@ -190,25 +228,59 @@ class Accessibility(Button):
             secondaryButton = []
             secMenu = SecondaryMenu(secondaryButton)
             secMenu.menuDraw()
-            HigConOn.draw()
-            HigConOff.draw()
+            HiConOn.draw()
+            HiConOff.draw()
             textDraw("High contrast mode: ", normalFont,blackText,750,30)
-            textDraw("On",normalFont,blackText,750,100)
-            textDraw("Off",normalFont,blackText,850,100)
+            textDraw("On",normalFont,blackText,750,120)
+            textDraw("Off",normalFont,blackText,850,120)
 
 class AccountStats(Button):
     def __init__(self):
+        """
+        Constructor for the AccountStats subclass of button
+
+        Args:
+            None
+        Returns:
+            None
+        """
         accountStatImg = pygame.image.load("accountStats.png").convert_alpha()
         super().__init__(accountStatImg,1)
         self.username = "username"
 
     def getData(self):
+        """
+        A method to find and return the data linked to to logged in username playing the game
+
+        Args:
+            None
+        Returns
+            userData.execute (list): Returns a list of all the data in the same row as the username being searched for
+        """
         userData = userFile.cursor()
         return userData.execute("SELECT * FROM users WHERE username = ?", (self.username,),).fetchone() # takes all the data from the line where the usernames match
     def printData(self):
+        """
+        A method to print the Data fetched by getData method
+
+        Args:
+            None
+        Returns:
+            None
+        """
+
         print(self.getData())
 
     def menuDraw(self):
+        """
+        This is a method to draw the menu, text to be displayed and the data fetched that links to the account
+
+        Args:
+            None
+        Returns:
+            None
+
+        """
         if self.menu:
             secondaryButton = []
             secMenu = SecondaryMenu(secondaryButton) #initialises as an object
@@ -217,10 +289,16 @@ class AccountStats(Button):
             textDraw("         Win         |        loss         |       games         ",normalFont,blackText,700,30) # what displays on screen when the menu opens
             textDraw(f"         {self.dataList[1]}                  {self.dataList[2]         }                  {self.dataList[3]}         ",normalFont,blackText,700,70)
             
-
-
 class Vsbutton(Button):
     def __init__(self):
+        """
+        Constructor for the Vsbutton subclass of button
+
+        Args:
+            None
+        Returns:
+            None
+        """
         vsImg = pygame.image.load("vsButton.png").convert_alpha()
         super().__init__(vsImg,1)
         self.opened = False
@@ -228,7 +306,7 @@ class Vsbutton(Button):
         
     def onClick(self):
         """
-        this will allow the secondary menu class to open the vs screen perminatly
+        this will allow the secondary menu class to open the vs screen until either the back button on screen or escape is pressed
         
         Args:
             None
@@ -242,7 +320,7 @@ class Vsbutton(Button):
             
     def displayDraw(self):
         """
-        This will draw the vs screen on the screen
+        This will draw the vs screen on the screen. Depending on if high contrast is needed the colour palet swaps
         
         Args:
             None
@@ -250,11 +328,27 @@ class Vsbutton(Button):
             None 
         """
         if self.newDisplay:
-            pygame.draw.rect(screen,(255,255,255),blankRect)#displays the placeholder screens
-            textDraw("taking you to a vs game", normalFont,blackText,10,10)
+            if HiConOff.action:
+                pygame.draw.rect(screen,(255,255,255),blankRect)#displays the placeholder screen
+                textDraw("taking you to a vs game", normalFont,blackText,10,10)
+                pygame.draw.rect(screen,(0,0,139),backRect)
+                textDraw("back to menu",normalFont,blackText,800,100)
+            else:
+                pygame.draw.rect(screen,(0,0,0),blankRect)#displays the placeholder screen but with the high contrast colours
+                textDraw("taking you to a vs game", normalFont,(255,255,0),10,10)
+                pygame.draw.rect(screen,(0,0,139),backRect)
+                textDraw("back to menu",normalFont,blackText,800,100)
 
 class Practise(Button):
     def __init__(self):
+        """
+        Constructor for the Practise subclass of button
+
+        Args:
+            None
+        Returns:
+            None
+        """
         practiseImg = pygame.image.load("practiseButton.png").convert_alpha()
         super().__init__(practiseImg,1)
         self.opened = False
@@ -262,7 +356,7 @@ class Practise(Button):
     
     def onClick(self):
         """
-        this will allow the secondary menu class to open the vs screen perminatly
+        this will allow the secondary menu class to open the vs screen until either the back button on screen or escape is pressed
         
         Args:
             None
@@ -275,7 +369,7 @@ class Practise(Button):
             
     def displayDraw(self):
         """
-        This will draw the vs screen on the screen
+        This will draw the vs screen on the screen. Depending on if high contrast is needed the colour palet swaps
         
         Args:
             None
@@ -283,11 +377,29 @@ class Practise(Button):
             None 
         """
         if self.newDisplay:
-            pygame.draw.rect(screen,(255,255,255),blankRect)#displays the placeholder screens
-            textDraw("taking you to a practise game",normalFont,blackText,10,10)
+            if HiConOff.action:
+                pygame.draw.rect(screen,(255,255,255),blankRect)#Displays the placeholder screens
+                textDraw("taking you to a practise game", normalFont,blackText,10,10)
+                pygame.draw.rect(screen,(0,0,139),backRect)
+                textDraw("back to menu",normalFont,blackText,800,100)
+            else:
+                pygame.draw.rect(screen,(0,0,0),blankRect)#displays the placeholder screen but with the high contrast colours
+                textDraw("taking you to a practise game", normalFont,(255,255,0),10,10)
+                pygame.draw.rect(screen,(0,0,139),backRect)
+                textDraw("back to menu",normalFont,blackText,800,100)
 
 class difficultyButton(Button):
-    def __init__(self, x: int, y: int):
+    def __init__(self, x: int, y: int,name:str):
+        """
+        Constructor for the difficultyButton subclass of button
+
+        Args:
+            x - The x coordinate of the top left corner of the button
+            y - The y coordinate of the top left corner of the button
+            name - A string to identify what button is pressed if needed
+        Returns:
+            None
+        """
         self.clickedImg = pygame.image.load("difficultyclicked.png").convert_alpha() # loads the images
         self.notclickedImg = pygame.image.load("difficultynot.png").convert_alpha()
         self.image = self.notclickedImg
@@ -296,13 +408,13 @@ class difficultyButton(Button):
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
+        self.name = name
 
     def draw(self):
         """
         This method will draw an image on the screen where the button is and change when the button has been selected
         Args:
-            x : the x coordinate of the top left corner of the button
-            y : the y coordinate of the top right corner of the button
+            None
         Return:
             None
 
@@ -313,29 +425,35 @@ class difficultyButton(Button):
         elif self.action == False:
             screen.blit(self.notclickedImg,self.rect.topleft)
 
-    def imageswap(self,event):
+    def select(self,event,group: list):
         """
-        this method will be used to change self.action when the button is pressed once to True and when its pressed again to False so that button images can swap
-
+        Makes it so the buttons are mutually exclusive of one another/when one is clicked the rest turn off
         Args:
-            None
+            event: a pygame event
+            group: a list of buttons that can be iterated through to change their self.action to false
         Returns:
             None
         """
-        pos = pygame.mouse.get_pos()
-        pressed = pygame.mouse.get_pressed()[0] #checks the mouse pos and if left click was pressed
-        
-        if event.type == pygame.MOUSEBUTTONDOWN:    
-            if self.rect.collidepoint(event.pos) == True:
-                self.action = not self.action
-            if self.clicked == True and self.action != True:
-                self.action = True #if the buttons are clciked and they've not already been clicked on self.action = True
-                print("first click worked")
-                self.draw()
-            elif self.clicked == True and self.action == True:
-                self.action = False #if the buttons are clicked and they've already been clicked self.action = False so that the buttons can be unselected
-                print("second click worked")
-                self.draw()
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.rect.collidepoint(event.pos):
+                for button in group:
+                    button.action = False
+                self.action = True
+
+    def getDifficulty(self,group: list):
+        """
+        Finds and returns the difficulty of the button that is selected what then function is called
+
+        Args:
+            group: list of buttons that can be checked
+
+        Returns:
+            Str for the corresponding difficulty
+        """
+
+        for button in group:
+            if button.action ==True:
+                return self.name
 
 class StartMenu:
     """
@@ -348,11 +466,11 @@ class StartMenu:
         initialises a menu
 
         Args:
-            buttons (list): a list of all the buttons to be displayed on the menu
             x(int): an int for the x coordinate of the top left corner of the menu
             y(int): an int for the y coordinate of the top left corner of the menu
             width(int): an int for the width of the menu
             length(int): an int for the length of the menu
+            buttons (list): a list of all the buttons to be displayed on the menu
 
         Returns:
             None
@@ -367,7 +485,7 @@ class StartMenu:
 
     def menuDraw(self):
         """
-        Draws the menu on the screen
+        A method that draws the menu on the screen
 
         Args:
             None
@@ -383,7 +501,7 @@ class StartMenu:
     
     def buttonDraw(self, xSpace :int, ySpace :int, buttonX:int, buttonY:int):
         """
-        this will take the buttons in the list and display them on the menu
+        this will take the buttons in the list and display them on the menu adjusting their x and y for the space the user wanted inbetween
         
         Args:
             xSpace: the seperation of the buttons in the x direction in px
@@ -433,6 +551,15 @@ class StartMenu:
                 button.onClick()
     
     def eventHandle(self, event):
+        """
+        A method to handle events and activate buttons inside the event loop
+
+        Args:
+            event(pygame event): the current pygame event being processed
+        Returns:
+            None
+        
+        """
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             for button in self.buttons:
                 if button.rect.collidepoint(event.pos):
@@ -444,6 +571,14 @@ class StartMenu:
 class SecondaryMenu(StartMenu):
 
     def __init__(self, buttons: list):
+            """
+            Constructor for the SecondaryMenu subclass of StartMenu
+
+            Args:
+                None
+            Returns:
+                None
+            """
             super().__init__(700, 10, 600,600, None )
             self.buttons = buttons
 
@@ -475,7 +610,7 @@ class SecondaryMenu(StartMenu):
             
     def isClicked(self):
         """
-        detects if the button is clicked
+        detects if a button in the button list set in the constructor (inherited) is clicked
 
         Args:
             None
@@ -491,7 +626,20 @@ class SecondaryMenu(StartMenu):
                 button.onClick()
                 button.displayDraw()
         
-    
+def resetMenu():
+    """
+    this function will serve as a way to get back to the main menu from the placeholder screen in the level select secondary menu
+
+    Args:
+        None
+    Returns:
+        None
+    """
+    vsButton.opened = False
+    vsButton.newDisplay = False
+    practiseButton.opened = False
+    practiseButton.newDisplay = False
+    levelButton.menu = False
 
 
 
@@ -511,10 +659,12 @@ textColour: tuple[int,int,int] = (255,255,255)
 inputColour: tuple[int,int,int] = (0,0,0)
 welcomeFont: pygame.font.Font = pygame.font.SysFont("arialblack", 40)
 normalFont: pygame.font.Font = pygame.font.SysFont("arial", 20)
+ruleFont: pygame.font.Font = pygame.font.SysFont("arial", 10)
 vsPlaceholder: bool = False
 practisePlaceholder:bool = False
 secondMenuCol = (173,216,230)
 blackText = (0,0,0)
+backgroundFill = (255,255,255)
 
 #Button variables
 levelPressed: bool = False  #i will use these values in the event loop for the pop out menus
@@ -527,6 +677,7 @@ startButton = None
 
 
 
+
 #rectangles
 #menuRect = pygame.Rect(300,10,350,1060) #serves as the rectangle where the buttons to the side menu will be
 levelSelectRect = pygame.Rect(700,10,400, 400)
@@ -535,6 +686,7 @@ settingsRect = pygame.Rect(700,50,400,600)
 accessibilityRect = pygame.Rect(700,70,400,400)
 statsRect = pygame.Rect(700, 90, 400,400)
 blankRect = pygame.Rect(0,0,1920,1080)
+backRect= pygame.Rect(800,100,100,100)
 
 #making the button objects
 levelButton = Levelselect()
@@ -544,11 +696,20 @@ accessButton = Accessibility()
 accountStatButton = AccountStats()
 vsButton = Vsbutton()
 practiseButton = Practise()
-easyDiff = difficultyButton(750,50)
-midDiff = difficultyButton(850,50)
-hardDiff = difficultyButton(950,50)
-HigConOn = difficultyButton(750,50)
-HigConOff = difficultyButton(850,50)
+easyDiff = difficultyButton(750,50,"easy")
+midDiff = difficultyButton(850,50,"mid")
+hardDiff = difficultyButton(950,50,"hard")
+HiConOn = difficultyButton(750,80,"")
+HiConOff = difficultyButton(850,80,"")
+
+#sets default for the buttons
+easyDiff.action = True
+HiConOff.action = True
+
+#Button groups:
+difficultyGroup = [easyDiff,midDiff,hardDiff]
+highContrastGroup = [HiConOn,HiConOff]
+
 
 #button list
 buttonList = [levelButton, gameHelpButton, settingsButton, accessButton, accountStatButton]
@@ -557,11 +718,10 @@ gamehelpmen = []
 
 start = StartMenu(300,10,350,1060,buttonList) #(self, buttons: list[Button],x: int, y: int, width: int, length: int):
 
-
 #game loop
 while run:
     #colour the screen
-    screen.fill((255,255,255))
+    screen.fill(backgroundFill)
     
     start.menuDraw()
     start.buttonDraw(0, 100, 300, 10) #def buttonDraw(self, xSpace :int, ySpace :int, buttonX:int, buttonY:int):
@@ -575,24 +735,37 @@ while run:
     accountStatButton.menuDraw()
 
 
+
     #check if the game is closed
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             quit()
+
+
+        if vsButton.newDisplay or practiseButton.newDisplay:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and blankRect.collidepoint(event.pos): #checks if the box was clicked
+                resetMenu()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE: # checks if escape was pressed
+                resetMenu()
+            continue
         start.eventHandle(event)
         if settingsButton.menu:
-            easyDiff.imageswap(event)
-            midDiff.imageswap(event) #each checks for being clciked so that the image can change
-            hardDiff.imageswap(event)
+            for button in difficultyGroup:
+                button.select(event, difficultyGroup) #checks and swaps what button is activated 
         if levelButton.menu:
             SecondaryMenu([vsButton,practiseButton]).eventHandle(event)
         if accessButton.menu:
             SecondaryMenu([]).eventHandle(event)
-            HigConOn.imageswap(event)
-            HigConOff.imageswap(event) # changes the images displayed when clicked
+            for button in highContrastGroup:
+                button.select(event,highContrastGroup)#swaps which button is clicked
+                if HiConOn.action == True:
+                    backgroundFill = (0,0,0)
+                if HiConOff.action == True:
+                    backgroundFill = (255,255,255)
         if accountStatButton.menu:
             SecondaryMenu([]).eventHandle(event)
+
 
 
 
