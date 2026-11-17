@@ -1,7 +1,9 @@
 import pygame
 import sqlite3
 from loginScreenScript import textDraw #imports a function that displays text on screen when called
-
+import pygame_widgets
+from pygame_widgets.slider import Slider
+from pygame_widgets.textbox import TextBox
 userFile = sqlite3.connect("user.db")
 
 class Button:
@@ -230,7 +232,7 @@ class Accessibility(Button):
             secMenu.menuDraw()
             HiConOn.draw()
             HiConOff.draw()
-            textDraw("High contrast mode: ", normalFont,blackText,750,30)
+            textDraw("dark mode: ", normalFont,blackText,750,30)
             textDraw("On",normalFont,blackText,750,120)
             textDraw("Off",normalFont,blackText,850,120)
 
@@ -389,6 +391,7 @@ class Practise(Button):
                 textDraw("back to menu",normalFont,blackText,800,100)
 
 class difficultyButton(Button):
+
     def __init__(self, x: int, y: int,name:str):
         """
         Constructor for the difficultyButton subclass of button
@@ -454,6 +457,29 @@ class difficultyButton(Button):
         for button in group:
             if button.action ==True:
                 return self.name
+
+class exitButton(Button):
+    def __init__(self):
+        """
+        This is the constructor for the exit button
+        Args:
+            None
+        Returns:
+            None
+        """
+        self.image = pygame.image.load("quitButton.png").convert_alpha()
+        super().__init__(self.image,0.25)
+    def onClick(self):
+        """
+        checks if the button has been pressed by looking at the events and closes the game if it has been
+        
+        Args:
+            event: pygame events
+        Returns:
+            None
+        """
+        pygame.quit() #quits
+        quit()
 
 class StartMenu:
     """
@@ -674,7 +700,10 @@ accessPressed: bool = False
 statsPressed: bool = False
 startButton = None
 
-
+#making slider object
+mewSlider = Slider(screen,800,200,400,20, min =0.1, max = 0.4, step = 0.1)
+mewDisplay = TextBox(screen,800,250,400,40, fontSize = 20)
+mewDisplay.disable()
 
 
 
@@ -701,6 +730,7 @@ midDiff = difficultyButton(850,50,"mid")
 hardDiff = difficultyButton(950,50,"hard")
 HiConOn = difficultyButton(750,80,"")
 HiConOff = difficultyButton(850,80,"")
+ExitButton = exitButton()
 
 #sets default for the buttons
 easyDiff.action = True
@@ -712,7 +742,7 @@ highContrastGroup = [HiConOn,HiConOff]
 
 
 #button list
-buttonList = [levelButton, gameHelpButton, settingsButton, accessButton, accountStatButton]
+buttonList = [levelButton, gameHelpButton, settingsButton, accessButton, accountStatButton,ExitButton]
 gamehelpmen = []
 
 
@@ -733,14 +763,14 @@ while run:
     settingsButton.menuDraw() #displays the settings menu when pressed
     accessButton.menuDraw()
     accountStatButton.menuDraw()
-
-
-
+    events = pygame.event.get()
+    
     #check if the game is closed
-    for event in pygame.event.get():
+    for event in events:
         if event.type == pygame.QUIT:
             pygame.quit()
             quit()
+            
 
 
         if vsButton.newDisplay or practiseButton.newDisplay:
@@ -752,7 +782,8 @@ while run:
         start.eventHandle(event)
         if settingsButton.menu:
             for button in difficultyGroup:
-                button.select(event, difficultyGroup) #checks and swaps what button is activated 
+                button.select(event, difficultyGroup) #checks and swaps what button is activated
+           
         if levelButton.menu:
             SecondaryMenu([vsButton,practiseButton]).eventHandle(event)
         if accessButton.menu:
@@ -765,10 +796,13 @@ while run:
                     backgroundFill = (255,255,255)
         if accountStatButton.menu:
             SecondaryMenu([]).eventHandle(event)
-
-
-
-
+        #updates the widgets with each event
+    if settingsButton.menu:
+        textDraw("friction slider:", normalFont,blackText, 700,150)
+        mewDisplay.setText(f"{mewSlider.getValue():.1f}")#make num 1dp
+        pygame_widgets.update(events) 
+        #displays the friction slider when the settings menu is open
+    
 
 
     #sets fps and makes sure screen is updated
